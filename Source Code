@@ -1,0 +1,87 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_CUSTOMERS 10
+
+int main() {
+    char names[MAX_CUSTOMERS][50];
+    int ids[MAX_CUSTOMERS];
+    float units[MAX_CUSTOMERS];
+    float baseAmount[MAX_CUSTOMERS];
+    float adjustment[MAX_CUSTOMERS];
+    float finalAmount[MAX_CUSTOMERS];
+
+    int choice, count = 0;
+
+    do {
+        printf("\nElectricity Billing System\n");
+        printf("--------------------------\n");
+        printf("1. Enter New Customer Data\n");
+        printf("2. Display Bill Summary\n");
+        printf("3. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        if (choice == 1) {
+            if (count >= MAX_CUSTOMERS) {
+                printf("Maximum number of customers reached!\n");
+                continue;
+            }
+
+            printf("\nEnter details for customer %d:\n", count + 1);
+            printf("Name: ");
+            scanf(" %[^\n]", names[count]);
+            printf("Consumer ID: ");
+            scanf("%d", &ids[count]);
+            printf("Monthly Electricity Usage (units): ");
+            scanf("%f", &units[count]);
+
+            // Calculate base amount
+            if (units[count] <= 100) {
+                baseAmount[count] = units[count] * 5;
+            } else if (units[count] <= 200) {
+                baseAmount[count] = 100 * 5 + (units[count] - 100) * 7;
+            } else {
+                baseAmount[count] = 100 * 5 + 100 * 7 + (units[count] - 200) * 10;
+            }
+
+            // Apply adjustment
+            if (baseAmount[count] > 2000) {
+                adjustment[count] = baseAmount[count] * 0.10; // surcharge
+            } else if (units[count] < 50) {
+                adjustment[count] = -baseAmount[count] * 0.05; // discount
+            } else {
+                adjustment[count] = 0;
+            }
+
+            finalAmount[count] = baseAmount[count] + adjustment[count];
+            count++;
+
+        } else if (choice == 2) {
+            if (count == 0) {
+                printf("\nNo customer data available.\n");
+            } else {
+                printf("\nBill Summary\n");
+                printf("---------------------------------------------------------------\n");
+                printf("Name\t\tID\tUnits\tBase\tAdj.\tFinal\n");
+                printf("---------------------------------------------------------------\n");
+
+                for (int i = 0; i < count; i++) {
+                    printf("%s\t\t%d\t%.2f\t%.2f\t%.2f\t%.2f\n",
+                           names[i], ids[i], units[i],
+                           baseAmount[i], adjustment[i], finalAmount[i]);
+                }
+                printf("---------------------------------------------------------------\n");
+            }
+
+        } else if (choice == 3) {
+            printf("Exiting program.\n");
+            break;
+        } else {
+            printf("Invalid choice! Try again.\n");
+        }
+
+    } while (1);
+
+    return 0;
+}
